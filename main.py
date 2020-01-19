@@ -6,9 +6,10 @@ import csv
 
 APIUrl = 'https://eu78.chat-api.com/instance92788/'
 token = 'tft0axneuzoou3uc'
+host = "79002795567"
 
 def read_number():
-    with open('avito.csv', encoding='utf8') as file:
+    with open('data.csv', encoding='utf8') as file:
         fieldnames = ['id', 'number', 'url', 'location', 'userType']
         reader = csv.DictReader(file, fieldnames=fieldnames)
         read_data =[]
@@ -40,12 +41,77 @@ def get_request(method, chatid=None):
     r = requests.get(url)
     return r.json()
 
-def send_message(chatID, text="Привет"):
-    data = {"chatId" : chatID,
-    "body" : text}
+# def send_message(chatID, text="Привет"):
+#     data = {"chatId" : chatID,
+#             "body" : text
+#             }
+#     send_requests('sendMessage', data)
+
+def send_message(number, text="Привет"):
+    data = {"phone" : number,
+            "body" : text
+            }
     send_requests('sendMessage', data)
 
-def group(name, author= "79002795567@c.us"):
+def send_link(chatID, text="Привет"):
+    data = {"chatId" : chatID,
+            "body" : text,
+            "previewBase64": "1",
+            "title": "Балконы"}
+    send_requests('sendLink', data)
+
+def send_file(chatID, text="Привет"):
+    data = {"chatId" : chatID,
+            "body" : text,
+            "filename": "1"
+            }
+    send_requests('sendFile', data)
+
+def group(name, author= host +"@c.us"):
+
+    phone = author.replace('@c.us', '')
+    data = {
+    "groupName" : str(name),
+    "phones" : [phone]}
+    #'messageText' : message}
+    answer = send_requests('group', data)
+    return answer
+
+def add_group(number, group_id):
+    data = {
+        "groupId": group_id,
+        "participantPhone": number
+    }
+    answer = send_requests('addGroupParticipant', data)
+    return answer
+
+def save_id(key):
+    for value in key.values():
+        return value
+
+def split(value):
+    if len(value) > 17:
+        value = value.split('-')
+        return value[1]
+
+def main():
+    # group('Балконы')
+    # sleep(3)
+    group_id = get_request('dialogs')
+    result = map(save_id, group_id.get('dialogs'))
+    result = list(result)
+    result_1 = map(split, result)
+    result_1 = list(result_1)
+    maximus = ' '
+    for i in result_1:
+        if i is not None:
+            if i > maximus:
+                maximus = i
+    #add_group (79659999963, host + "-" + maximus)
+    for i in read_number():
+        print(i)
+        add_group(i, host+ "-" + maximus)
+        sleep(0.5)
     message = 'Всех с прошедшими праздниками!''\n''\n' \
               'ВЫ ПОБЕДИЛИ. ВАШ ПРИЗ VOLKSWAGEN POLO (Стоимостью 850.000 руб.)''\n''\n' \
               'Сейчас объясню как забрать Вам свой Автомобиль.''\n''\n' \
@@ -60,67 +126,19 @@ def group(name, author= "79002795567@c.us"):
               'Мы работаем по Договору, поэтому для наших клиентов действует Гарантия и на монтажные работы и на материал.''\n''\n' \
               'Земляки, сейчас действуют СКИДКИ И АКЦИИ.''\n''\n' \
               'И ОГРОМНЫЙ ПОДАРОК В ВИДЕ АВТОМОБИЛЯ VOLKSWAGEN POLO (Стоимостью 850.000 руб.)' \
-              ' При заказе «Полной обшивки балкона». Акция Действует с 01.09.2019 до 30.04.2020 г.РОЗЫГРЫШ состоится в МАЕ 2020 г. в прямом эфире Instagram.''\n''\n' \
-              'Если вам хочется видеть свой балкон таким как на фото – переходите на сайт, оставляйте контактные данные и наш менеджер позвонить вам в течении 5 минут!'
-    phone = author.replace('@c.us', '')
-    data = {
-    "groupName" : str(name),
-    "phones" : [phone, 79659999963],
-    'messageText' : message}
-    answer = send_requests('group', data)
-    return answer
+              ' При заказе «Полной обшивки балкона». Акция Действует с 01.09.2019 до 30.04.2020 г.РОЗЫГРЫШ состоится в МАЕ 2020 г. в прямом эфире Instagram.''\n''\n'\
+              'Если вам хочется видеть свой балкон таким как на фото – переходите на сайт, оставляйте контактные данные и наш менеджер позвонит вам в течении 5 минут!'
 
-def add_group(number, group_id):
-    data = {
-        "groupId": group_id,
-        "participantPhone": number
-    }
-    answer = send_requests('addGroupParticipant', data)
-    return answer
+    link = "http://bit.ly/3ameR0W"
+    send_message(host + "-" + maximus, message)
+    send_link(host + "-" + maximus, link)
+    send_file(host + "-" + maximus,
+              "https://cdn1.radikalno.ru/uploads/2020/1/19/e1b6df2fe809ffe5567975b1a5138846-full.jpg")
+    send_file(host + "-" + maximus,
+              "https://cdn1.radikalno.ru/uploads/2020/1/19/33a10686794e31d337b7a569669e29fd-full.jpg")
+    send_file(host + "-" + maximus,
+              "https://cdn1.radikalno.ru/uploads/2020/1/19/225a5d6cfc43ff5bd2f767234c355640-full.jpg")
 
-# def send_message(chatid, message):
-#     data = {"chatId": chatid,
-#             "body": message}
-#     send_requests('sendMessage', data)
-
-
-def main():
-    #print(read_number())
-    #group('Балконы')
-    sleep(3)
-    group_id = get_request('dialogs')
-    print(group_id.get('dialogs'))
-    answer = len(group_id.get('dialogs'))
-    print(answer)
-    for key in group_id.get('dialogs'):
-        #ids = [i for i in key]
-        id =find_element(key, 'id')
-        print(id)
-        id = id.split('-')
-        try:
-            print(id[1])
-            ids = []
-            ids.append(id[1])
-        except:Exception
-    print(ids)
-    log = add_group(79530888073, "79002795567-" + ids[0])
-    print(type(log))
-    print(log.get('add'))
-    num = [79530888073, 79000002442, 79659999963, 79930099309, 79537870750, 79520708038]
-    for i in num:
-        log = add_group(i, "79002795567-" + ids[0])
-        sleep(1)
-        answer = group_id.get('dialogs')
-        for key in group_id.get('dialogs'):
-            participants = find_element(key, 'participants')
-            try:
-                print(participants)
-                if (len(participants) >= 5):
-                    break
-            except:Exception
-    #send_message("79002795567-" + ids[0], "Privet")
-    #for i in read_number():
-        #print(i)
 
 
 
